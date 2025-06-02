@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react';
-import { FormErrors } from '../types/post';
+import { FormErrors } from '../../types/post'; 
 
 interface PostFormProps {
   formData: {
