@@ -4,6 +4,8 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import CriarPost from './components/CriarPost';
 import Sobre from './components/Sobre';
+import PostDetail from './components/PostDetail';  
+import EditPost from './components/EditPost';      
 
 const App = () => {
   return (
@@ -14,6 +16,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/criar-post" element={<CriarPost />} />
           <Route path="/sobre" element={<Sobre />} />
+          <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/edit-post/:id" element={<EditPost />} />
         </Routes>
         <Footer />
       </div>
