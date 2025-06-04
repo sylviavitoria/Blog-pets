@@ -12,6 +12,7 @@ const Header = () => {
       <i 
         className="fa fa-bars menu" 
         id="menuToggle"
+        data-testid="menuToggle"  
         onClick={() => setMenuOpen(!menuOpen)}
       />
       <ul className="nav" id="menuItems" style={{ display: menuOpen ? 'block' : '' }}>
