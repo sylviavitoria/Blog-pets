@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Post } from '../types/post';
+import { Post, PostResponse, PageResponse } from '../types/post';
 
 const API_URL = 'http://localhost:8080/api/v1';
 
@@ -9,14 +9,6 @@ const api = axios.create({
     'Content-Type': 'application/json'
   }
 });
-
-interface PostResponse {
-  id: number;
-  titulo: string;
-  autor: string;
-  descricao: string;
-  dataCriacao?: string;
-}
 
 export const postService = {
   async criarPost(postData: Post): Promise<PostResponse> {
