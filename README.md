@@ -1,4 +1,4 @@
-# 🐾 MundoPet - Blog Interativo para Amantes de Pets
+# 🐾 MundoPet - Blog Interativo sobre Pets
 
 ## 📝 Descrição
 
