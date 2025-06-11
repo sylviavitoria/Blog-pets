@@ -11,10 +11,11 @@ const EditPost = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const [isPostLoaded, setIsPostLoaded] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
-      
       if (!id || id === 'undefined' || isNaN(parseInt(id))) {
         setError('ID de post inválido');
         setLoading(false);
@@ -28,6 +29,7 @@ const EditPost = () => {
           autor: postData.autor,
           descricao: postData.descricao
         });
+        setIsPostLoaded(true); 
       } catch (error) {
         console.error('Erro ao buscar post:', error);
         if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -43,8 +45,25 @@ const EditPost = () => {
     fetchPost();
   }, [id]);
 
-  const { formData, errors, enviando, enviado, handleChange, handleSubmit } = 
-    usePostUpdate(parseInt(id || '0'), post || { titulo: '', autor: '', descricao: '' });
+  const postId = parseInt(id || '0');
+  const defaultPost = { titulo: '', autor: '', descricao: '' };
+  
+  const { 
+    formData, 
+    errors, 
+    enviando, 
+    enviado, 
+    handleChange, 
+    handleSubmit, 
+    setFormData 
+  } = usePostUpdate(postId, post || defaultPost);
+
+
+  useEffect(() => {
+    if (isPostLoaded && post) {
+      setFormData(post);
+    }
+  }, [isPostLoaded, post, setFormData]);
 
   useEffect(() => {
     if (enviado) {
