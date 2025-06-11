@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Post, FormErrors } from '../types/post';
 import { postService } from '../service/postService';
+import { validarFormulario } from '../utils/validacaoForm';
 
 interface ApiError {
   field: string;
@@ -26,31 +27,8 @@ export function usePostUpdate(id: number, initialData: Post) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const validarFormulario = (): boolean => {
-    
-    const novosErros: FormErrors = {};
-    const { titulo, autor, descricao } = formData;
-    
-    if (!titulo.trim()) {
-      novosErros.titulo = 'O título é obrigatório';
-    } else if (titulo.trim().length < 5) {
-      novosErros.titulo = 'O título deve ter pelo menos 5 caracteres';
-    } else if (titulo.trim().length > 100) {
-      novosErros.titulo = 'O título deve ter no máximo 100 caracteres';
-    }
-    
-    if (!autor.trim()) {
-      novosErros.autor = 'O autor é obrigatório';
-    } else if (autor.trim().length < 3) {
-      novosErros.autor = 'O nome do autor deve ter pelo menos 3 caracteres';
-    }
-    
-    if (!descricao.trim()) {
-      novosErros.descricao = 'A descrição é obrigatória';
-    } else if (descricao.trim().length < 10) {
-      novosErros.descricao = 'A descrição deve ter pelo menos 10 caracteres';
-    }
-    
+  const validarESetarErros = (): boolean => {
+    const novosErros = validarFormulario(formData);
     setErrors(novosErros);
     return Object.keys(novosErros).length === 0;
   };
@@ -58,7 +36,7 @@ export function usePostUpdate(id: number, initialData: Post) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!validarFormulario()) {
+    if (!validarESetarErros()) {
       return;
     }
     
@@ -103,6 +81,6 @@ export function usePostUpdate(id: number, initialData: Post) {
     enviado,
     handleChange,
     handleSubmit,
-    setFormData
+    setFormData 
   };
 }
