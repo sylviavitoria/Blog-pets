@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { postService } from '../service/postService';
-import { PostResponse } from '../types/post';
+import { usePostDetail } from '../hooks/usePostDetail';
+import { usePostDelete } from '../hooks/usePostDelete';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { usePostDelete } from '../hooks/usePostDelete';
 
 const PostDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [post, setPost] = useState<PostResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { post, loading, error } = usePostDetail(id);
   const { excluirPost, loading: loadingDelete } = usePostDelete();
 
   const handleDelete = async () => {
@@ -22,33 +18,6 @@ const PostDetail = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      
-      if (!id || id === 'undefined' || isNaN(parseInt(id))) {
-        setError('ID de post inválido');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const postData = await postService.buscarPorId(parseInt(id));
-        setPost(postData);
-      } catch (error) {
-        console.error('Erro ao buscar post:', error);
-        if (typeof error === 'object' && error !== null && 'message' in error) {
-          setError((error as { message: string }).message);
-        } else {
-          setError('Erro ao carregar o post. Tente novamente mais tarde.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [id]);
 
   if (loading) {
     return (
