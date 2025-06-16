@@ -1,49 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { postService } from '../service/postService';
 import { usePostUpdate } from '../hooks/usePostUpdate';
+import { usePostDetail } from '../hooks/usePostDetail';
 import PostForm from './form/PostForm';
-import { Post } from '../types/post';
 
 const EditPost = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   
-  const [isPostLoaded, setIsPostLoaded] = useState(false);
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!id || id === 'undefined' || isNaN(parseInt(id))) {
-        setError('ID de post inválido');
-        setLoading(false);
-        return;
-      }
-      
-      try {
-        const postData = await postService.buscarPorId(parseInt(id));
-        setPost({
-          titulo: postData.titulo,
-          autor: postData.autor,
-          descricao: postData.descricao
-        });
-        setIsPostLoaded(true); 
-      } catch (error) {
-        console.error('Erro ao buscar post:', error);
-        if (typeof error === 'object' && error !== null && 'message' in error) {
-          setError((error as { message: string }).message);
-        } else {
-          setError('Erro ao carregar o post. Tente novamente mais tarde.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPost();
-  }, [id]);
+  const { post: postData, loading, error } = usePostDetail(id);
 
   const postId = parseInt(id || '0');
   const defaultPost = { titulo: '', autor: '', descricao: '' };
@@ -56,14 +21,17 @@ const EditPost = () => {
     handleChange, 
     handleSubmit, 
     setFormData 
-  } = usePostUpdate(postId, post || defaultPost);
-
+  } = usePostUpdate(postId, defaultPost);
 
   useEffect(() => {
-    if (isPostLoaded && post) {
-      setFormData(post);
+    if (postData) {
+      setFormData({
+        titulo: postData.titulo,
+        autor: postData.autor,
+        descricao: postData.descricao
+      });
     }
-  }, [isPostLoaded, post, setFormData]);
+  }, [postData, setFormData]);
 
   useEffect(() => {
     if (enviado) {
@@ -86,7 +54,7 @@ const EditPost = () => {
     );
   }
 
-  if (error || !post) {
+  if (error || !postData) {
     return (
       <div className="content">
         <div className="edit-post">
